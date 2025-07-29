@@ -2,7 +2,7 @@ import multiprocessing
 import subprocess
 
 # Lista com os nomes dos scripts a executar
-scripts = ["antagonista.py"]
+scripts = ["antagonista.py","diariocentrodomundo.py"]
 
 def run_script(script_name, i):
     print(f"\033[32m[INFO] Iniciando {script_name.replace('scripts/','')}\033[3{i}m")
