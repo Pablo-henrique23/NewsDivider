@@ -14,6 +14,7 @@ def extrair_conteudo_noticia(url):
         soup = BeautifulSoup(res.content, "html.parser")
 
         titulo = soup.find("h1", class_='p-name').get_text(strip=True)
+        
 
         corpo = soup.find("div", class_="post-interna__content__corpo")
         paragrafos = [p.get_text(strip=True) for p in corpo.find_all("p")]

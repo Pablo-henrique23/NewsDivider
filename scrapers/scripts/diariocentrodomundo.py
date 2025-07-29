@@ -5118,6 +5118,7 @@ window.lazyLoadOptions={elements_selector:"img[data-src],.perfmatters-lazy,.perf
 
 import cloudscraper
 from bs4 import BeautifulSoup
+from time import sleep
 
 scraper = cloudscraper.create_scraper()
 def extrair_conteudo_noticia(url):
@@ -5126,6 +5127,9 @@ def extrair_conteudo_noticia(url):
         soup = BeautifulSoup(res.content, "html.parser")
         
         titulo = soup.find("h1", class_='entry-title').get_text(strip=True)
+        if not titulo or titulo == '' or titulo is None:
+            titlo = 'NO-TITLE'
+
         corpo = soup.find("div", class_="td-post-content td-pb-padding-side")
         paragrafos = [p.get_text(strip=True) for p in corpo.find_all("p")]
         texto = "\n".join(paragrafos)
@@ -5133,7 +5137,7 @@ def extrair_conteudo_noticia(url):
         return {"titulo": titulo, "texto": texto, "url": url}
     except Exception as e:
         print(f"[ERRO] {url}: {e}")
-        return #{"titulo": titulo, "texto": texto, "url": url}
+        return {"titulo": titulo, "texto": texto, "url": url}
     
 
 soup = BeautifulSoup(html, "html.parser")
@@ -5141,11 +5145,15 @@ noticias = []
 
 for noticia in soup.find_all('div', class_='td-module-thumb'):
     for a in noticia:
-        noticias.append(a.get('href'))
+        href = a.get('href')
+        if href and href not in noticias:
+            noticias.append(href)
 
 n = []
 for i, noticia in enumerate(noticias):
     n = extrair_conteudo_noticia(noticia)
     print(f"\n--- Notícia {i} ---")
-    print(f"Título: {n['titulo']}")
+    if n['titulo']:
+        print(f"Título: {n['titulo']}")
     print(f"Texto: {n['texto']}")
+    sleep(.4)
