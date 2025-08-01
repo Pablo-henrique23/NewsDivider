@@ -6,7 +6,7 @@ import csv
 scraper = cloudscraper.create_scraper()
 
 
-arquivo_csv = "../dataset/antagonista.csv"
+arquivo_csv = "dataset/antagonista.csv"
 base_url = "https://oantagonista.com.br/brasil"
 
 noticias = []
@@ -22,7 +22,7 @@ def extrair_conteudo_noticia(url):
         try:
             titulo = soup.find("h1", class_='p-name').get_text(strip=True)
         except AttributeError:
-            print(f'[ERRO] em {url} cheque o titulo!!\n')
+            print(f'\033[31m[ERRO] em {url} cheque o titulo!!\033[m\n')
             return
         corpo = soup.find("div", class_="post-interna__content__corpo")
         paragrafos = [p.get_text(strip=True) for p in corpo.find_all("p")]

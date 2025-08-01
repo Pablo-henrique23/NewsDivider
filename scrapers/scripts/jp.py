@@ -8,7 +8,7 @@ import threading
 scraper = cloudscraper.create_scraper()
 
 
-arquivo_csv = "../dataset/jovempan.csv"
+arquivo_csv = "dataset/jovempan.csv"
 base_url = "https://jovempan.com.br/noticias/politica"
 
 noticias = []
@@ -20,14 +20,13 @@ lock = threading.Lock()
 def extrair_conteudo_noticia(url):
     try:
         res = scraper.get(url)
-        sleep(0.2)
-        print(res.status_code)
+        #print(res.status_code)
         soup = BeautifulSoup(res.content, "html.parser")
 
         try:
             titulo = soup.find("h1", class_='post-title').get_text(strip=True)
         except AttributeError:
-            print(f'[ERRO] em {url} cheque o titulo!!\n')
+            #print(f'[ERRO] em {url} cheque o titulo!!\n')
             return
         corpo = soup.find("div", class_="context")
         paragrafos = [p.get_text(strip=True) for p in corpo.find_all("p")]
@@ -35,7 +34,7 @@ def extrair_conteudo_noticia(url):
 
         return {"titulo": titulo, "texto": texto, "url": url}
     except Exception as e:
-        print(f"[ERRO] {url}: {e}")
+        #print(f"[ERRO] {url}: {e}")
         return {"titulo": titulo, "texto": texto, "url": url}
 
 
@@ -49,23 +48,23 @@ def proccess_page(pagina):
     sleep(0.2)
 
     if res.status_code != 200:
-        print(f"[FIM] Página {pagina} não acessível. Encerrando.")
+        #print(f"[FIM] Página {pagina} não acessível [{res.status_code}]. Encerrando.")
         return
 
     soup = BeautifulSoup(res.content, "html.parser")
     artigos = soup.find_all('article')
     
-    #print(artigos)
+    ##print(artigos)
     links = []
     for artigo in artigos:
         a = artigo.find('a')
         href = a.get("href")
-        print(href)
+        #print(href)
         if href and href not in links:
             links.append(href)
 
     for link in links:
-        print(link)
+        #print(link)
         with lock:
             if len(noticias) >= total_noticias:
                 break
@@ -73,7 +72,7 @@ def proccess_page(pagina):
         if noticia:
             with lock:
                 noticias.append(noticia)
-                print(f"[OK] {noticia['titulo']}")
+                #print(f"[OK] {noticia['titulo']}")
 
 
 # Iniciando as threads
@@ -86,16 +85,8 @@ for i in range(1, paginas + 1):
 # Esperar todas as threads terminarem
 for t in threads:
     t.join()
-#print(noticias)
-print(f"\nTotal coletado: {len(noticias)} notícias")
-
-# Exemplo de saída
-for i, n in enumerate(noticias):
-    print(f"\n--- Notícia {i} ---")
-    print(f"Título: {n['titulo']}")
-    print(f"Texto: {n['texto']}")
-
-print(f"\nTotal coletado: {len(noticias)} notícias")
+    
+#print(f"\nTotal coletado: {len(noticias)} notícias")
 
 with open(arquivo_csv, mode="w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
@@ -103,10 +94,13 @@ with open(arquivo_csv, mode="w", newline="", encoding="utf-8") as f:
     writer.writerow(["id", "titulo", "corpo"])
     cont = 0 
     for i, noticia in enumerate(noticias):
+        if i >= total_noticias:
+            break
         try:
             writer.writerow([i, noticia["titulo"], noticia["texto"]])
             cont += 1
         except:
-            print(f'[ERRO] em {noticia}!!!')
+            #print(f'[ERRO] em {noticia}!!!')
+            pass
     
-    print(f"CSV contém {cont} itens")
+    #print(f"CSV contém {cont} itens")

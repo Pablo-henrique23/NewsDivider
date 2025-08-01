@@ -1,14 +1,12 @@
-
-
 import cloudscraper
 import csv
 from bs4 import BeautifulSoup
 
-arquivo_csv = "../dataset/diariocentrodomundo.csv"
+arquivo_csv = "dataset/diariocentrodomundo.csv"
 base_url = 'https://www.brasil247.com'
 total_noticias = 100
 html = ''
-with open('diario.html', encoding='utf-8') as f:
+with open('scripts/diario.html', mode='r', encoding='utf-8') as f:
     html = f.read()
 
 
@@ -34,10 +32,10 @@ def extrair_conteudo_noticia(url):
             paragrafos.append(texto)
 
         texto = "\n".join(paragrafos)
-        print(f"[OK] {titulo}")
+        #print(f"[OK] {titulo}")
         return {"titulo": titulo, "texto": texto, "url": url}
     except Exception as e:
-        print(f"[ERRO] {url}: {e}")
+        #print(f"[ERRO] {url}: {e}")
         return {}
     
 
@@ -52,7 +50,7 @@ for noticia in soup.find_all('article', class_='artGrid artGrid--small grid__ite
     if len(noticias) >= total_noticias:
         break
 
-print(f'Noticias scrapadas: {len(noticias)}')
+#print(f'Noticias scrapadas: {len(noticias)}')
 
 n = []
 for i, noticia in enumerate(noticias):
@@ -67,6 +65,7 @@ with open(arquivo_csv, mode="w", newline="", encoding="utf-8") as f:
             writer.writerow([i, noticia["titulo"], noticia["texto"]])
             cont += 1
         except TypeError:
-            print(f'[ERRO] em {noticia}!!!')
+            #print(f'[ERRO] em {noticia}!!!')
+            pass
             
-    print(f"CSV contém {cont} itens")
+    #print(f"CSV contém {cont} itens")

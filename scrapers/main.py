@@ -2,12 +2,12 @@ import multiprocessing
 import subprocess
 
 # Lista com os nomes dos scripts a executar
-scripts = ["antagonista.py","diariocentrodomundo.py"]
+scripts = ["antagonista.py", "diariocentrodomundo.py", "jp.py"]
 
 def run_script(script_name):
-    print(f"[INFO] Iniciando {script_name.replace('scripts/','')}")
+    #print(f"[INFO] Iniciando {script_name.replace('scripts/','')}")
     subprocess.run(["python", script_name])
-    print(f"[INFO] Finalizou {script_name.replace('scripts/','')}")
+    #print(f"[INFO] Finalizou {script_name.replace('scripts/','')}")
 
 if __name__ == "__main__":
     processes = []
@@ -21,4 +21,4 @@ if __name__ == "__main__":
     for p in processes:
         p.join()
 
-    print("[INFO] Todos os scripts terminaram.")
+    #print("[INFO] Todos os scripts terminaram.")
