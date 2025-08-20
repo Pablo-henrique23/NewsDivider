@@ -29,7 +29,7 @@ def extrair_conteudo_noticia(url):
             #print(f'[ERRO] em {url} cheque o titulo!!\n')
             return
         corpo = soup.find("div", class_="context")
-        paragrafos = [p.get_text(strip=True) for p in corpo.find_all("p")]
+        paragrafos = [p.get_text(strip=False) for p in corpo.find_all("p")]
         texto = "\n".join(paragrafos)
 
         return {"titulo": titulo, "texto": texto, "url": url}

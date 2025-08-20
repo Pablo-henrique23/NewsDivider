@@ -28,7 +28,7 @@ def extrair_conteudo_noticia(url):
             if first_tag and first_tag.name.lower() == "strong":
                 continue  # pula esse <p>, pq o filho dele é o auto
 
-            texto = p.get_text(strip=True).replace('\n', '')
+            texto = p.get_text(strip=False).replace('\n', '')
             paragrafos.append(texto)
 
         texto = "\n".join(paragrafos)
