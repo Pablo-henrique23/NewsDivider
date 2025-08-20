@@ -75,7 +75,7 @@ for i, n in enumerate(noticias):
     print(f"Texto: {n['texto']}")
 '''
 
-with open(arquivo_csv, mode="w", newline="", encoding="utf-8") as f:
+with open(arquivo_csv, mode="w+", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
     
     writer.writerow(["id", "titulo", "corpo"])

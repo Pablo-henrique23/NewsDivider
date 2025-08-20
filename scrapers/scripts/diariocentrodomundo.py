@@ -56,7 +56,7 @@ n = []
 for i, noticia in enumerate(noticias):
     n.append(extrair_conteudo_noticia(noticia))
 
-with open(arquivo_csv, mode="w", newline="", encoding="utf-8") as f:
+with open(arquivo_csv, mode="w+", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
     writer.writerow(["id", "titulo", "corpo"])
     cont = 0

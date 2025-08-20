@@ -88,7 +88,7 @@ for t in threads:
     
 #print(f"\nTotal coletado: {len(noticias)} notícias")
 
-with open(arquivo_csv, mode="w", newline="", encoding="utf-8") as f:
+with open(arquivo_csv, mode="w+", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
     
     writer.writerow(["id", "titulo", "corpo"])
