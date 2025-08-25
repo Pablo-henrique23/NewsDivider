@@ -1,20 +1,25 @@
 import csv
 from bs4 import BeautifulSoup
 import cloudscraper
+import threading
 
 scraper = cloudscraper.create_scraper()
 
 arquivo_csv = "dataset/cartacapital.csv"
-base_url = "https://www.cartacapital.com.br/politica/"
+base_url = "https://www.cartacapital.com.br/politica"
 
 noticias = []
-pagina = 1
+paginas = 10
 total_noticias = 100
+lock = threading.Lock()
 
 
 def extrair_conteudo_noticia(url):
     try:
         res = scraper.get(url)
+        if res.status_code != 200:
+            print(f"[ERRO] {url}: {res.status_code}")
+            return
         soup = BeautifulSoup(res.content, "html.parser")
 
         try:
@@ -22,29 +27,33 @@ def extrair_conteudo_noticia(url):
         except AttributeError:
             print(f'\033[31m[ERRO] em {url} cheque o titulo!!\033[m\n')
             return
-        
         corpo = soup.find("div", class_="content-closed contentOpen")
-        try:
-            paragrafos = [p.get_text(strip=False) for p in corpo.find_all("p", class_='pf0')]
-        except AttributeError:
-            return None
-        if len(paragrafos) == 0:
+
+        paragrafos = [p.get_text(strip=False) for p in corpo.find_all("p")]
+
+        texto = "\n".join(paragrafos)
+
+        if len(texto) == 0:
             del paragrafos
             paragrafos = [p.get_text(strip=False) for p in corpo.find_all("span", class_='cf0')]
-            return
-        texto = "\n".join(paragrafos)
+            texto = "\n".join(paragrafos)
+            
+        if 'Senado aprova Wadih Damous para a presidência da ANS' in titulo:
+            print(titulo)
+            print(paragrafos)
+            print(texto)
         # print(texto)
         
+        # print(f'[PEGANDO] {titulo}')
         return {"titulo": titulo, "texto": texto, "url": url}
 
     except Exception as e:
         print(f"[ERRO] {url}: {e}")
         return {"titulo": titulo, "texto": texto, "url": url}
+    
 
-
-while len(noticias) < total_noticias:
-
-    url_pagina = f"{base_url}/"
+def proccess_page(pagina):
+    url_pagina = base_url
     if pagina > 1:
         url_pagina = f"{base_url}/page/{pagina}/"
 
@@ -52,8 +61,9 @@ while len(noticias) < total_noticias:
 
     if res.status_code != 200:
         print(f"[FIM] Página {pagina} não acessível. Encerrando.")
-        break
+        return
 
+    print(f"Scraping {url_pagina}")
     soup = BeautifulSoup(res.content, "html.parser")
     artigos = soup.find_all('a', class_='l-list__item')
 
@@ -63,15 +73,30 @@ while len(noticias) < total_noticias:
         if href and href not in links:
             links.append(href)
 
+    print(f'{url_pagina} -> {len(links)}')
+    
     for link in links:
-        if len(noticias) >= total_noticias:
-            break
+        with lock:
+            if len(noticias) >= total_noticias:
+                print(len(noticias))
+                break
         noticia = extrair_conteudo_noticia(link)
-        if noticia:
-            noticias.append(noticia)
-            print(f"[OK] {noticia['titulo']}")
 
-    pagina += 1
+        if noticia:
+            with lock:
+                noticias.append(noticia)
+
+
+threads = []
+for i in range(1, paginas + 1):
+    t = threading.Thread(target=proccess_page, args=(i,))
+    t.start()
+    threads.append(t)
+
+# Esperar todas as threads terminarem
+for t in threads:
+    t.join()
+
 
 print(f"\nTotal coletado: {len(noticias)} notícias")
 
