@@ -66,7 +66,6 @@ while len(noticias) < total_noticias:
 
 print(f"\nTotal coletado: {len(noticias)} notícias")
 
-# Exemplo de saída
 '''
 for i, n in enumerate(noticias):
     print(f"\n--- Notícia {i} ---")

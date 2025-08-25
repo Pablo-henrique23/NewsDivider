@@ -4,7 +4,6 @@ import csv
 from time import sleep
 import threading
 
-# Criando o scraper com headers personalizados
 scraper = cloudscraper.create_scraper()
 
 
@@ -75,14 +74,12 @@ def proccess_page(pagina):
                 #print(f"[OK] {noticia['titulo']}")
 
 
-# Iniciando as threads
 threads = []
 for i in range(1, paginas + 1):
     t = threading.Thread(target=proccess_page, args=(i,))
     t.start()
     threads.append(t)
 
-# Esperar todas as threads terminarem
 for t in threads:
     t.join()
     

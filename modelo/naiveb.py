@@ -12,7 +12,7 @@ nltk.download("stopwords")
 stopwords_pt = stopwords.words("portuguese")
 
 
-df = pd.read_csv("test.csv")  # ajuste o caminho se precisar
+df = pd.read_csv("test.csv")
 
 X = df["titulo"]
 y = df["label"]

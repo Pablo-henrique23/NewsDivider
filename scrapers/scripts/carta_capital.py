@@ -93,7 +93,6 @@ for i in range(1, paginas + 1):
     t.start()
     threads.append(t)
 
-# Esperar todas as threads terminarem
 for t in threads:
     t.join()
 

@@ -1,7 +1,6 @@
 import multiprocessing
 import subprocess
 
-# Lista com os nomes dos scripts a executar
 scripts = ["carta_capital.py","antagonista.py", "diariocentrodomundo.py", "jp.py"]
 
 def run_script(script_name):
@@ -17,7 +16,6 @@ if __name__ == "__main__":
         p.start()
         processes.append(p)
 
-    # Espera todos terminarem
     for p in processes:
         p.join()
 
