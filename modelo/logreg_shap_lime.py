@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -54,19 +55,37 @@ test_df = pd.DataFrame({
 pd.set_option("display.max_colwidth", None)
 print(test_df.head())
 
-explainer = shap.Explainer(logreg_model, X_train_vec, feature_names=vectorizer.get_feature_names_out())
+masker = shap.maskers.Independent(
+    X_train_vec,
+    max_samples=len(X_train)
+)
+
+explainer = shap.Explainer(
+    logreg_model,
+    masker,
+    feature_names=vectorizer.get_feature_names_out()
+)
+
 idx = 0
 shap_values = explainer(X_test_vec[idx])
 
-shap.initjs()
-shap.plots.bar(shap_values)  # gráfico de barras mostrando os termos mais importantes
-# shap.plots.waterfall(shap_values)  # alternativa detalhada por feature
+shap.plots.bar(shap_values[0], show=False)
+
+plt.savefig("shap_logreg.png", dpi=300, bbox_inches="tight")
+plt.close()
+
+print("Gráfico SHAP salvo em shap_logreg.png")
 
 explainer_lime = LimeTextExplainer(class_names=["esquerda","direita"])
 predict_fn = lambda x: logreg_model.predict_proba(vectorizer.transform(x))
 i = 0
 exp = explainer_lime.explain_instance(X_test.iloc[i], predict_fn, num_features=10)
+
 print("LIME Logistic Regression:")
+
 for c in exp.as_list():
     print(f'{c[0]:<20} = {c[1]}')
+
+exp.save_to_file("lime_logreg.html")
+print("Explicação LIME salva em lime_logreg.html")
 

@@ -28,6 +28,10 @@ dataset = pd.concat(dfs, ignore_index=True)
 
 dataset = dataset.dropna(subset=["corpo"])
 
+dataset = dataset.drop_duplicates(
+    subset=["titulo", "corpo"]
+).reset_index(drop=True)
+
 train_val_df, test_df = train_test_split(
     dataset,
     test_size=0.15,
