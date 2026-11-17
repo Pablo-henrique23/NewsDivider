@@ -4,17 +4,19 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
-df = pd.read_csv("test.csv")
+train_df = pd.read_csv("train.csv")
+val_df = pd.read_csv("val.csv")
+test_df = pd.read_csv("test.csv")
 
-X = df["titulo"]
-y = df["label"]
+X_train = train_df["titulo"]
+y_train = train_df["label"]
 
-X_train, X_temp, y_train, y_temp = train_test_split(
-    X, y, test_size=0.30, random_state=42, stratify=y
-)
-X_val, X_test, y_val, y_test = train_test_split(
-    X_temp, y_temp, test_size=0.50, random_state=42, stratify=y_temp
-)
+X_val = val_df["titulo"]
+y_val = val_df["label"]
+
+X_test = test_df["titulo"]
+y_test = test_df["label"]
+
 
 vectorizer = TfidfVectorizer()
 X_train_vec = vectorizer.fit_transform(X_train)
